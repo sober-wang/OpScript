@@ -12,18 +12,29 @@
 import configparser
 import sys
 import os
+from multiprocessing import Pool
 
-def ergIp(ipGroup,sourceDir,tagDir):
-    for ipValue in ipGroup:
-        os.system("scp -r " + sourceDir + " root@" + ipValue + ":" + tagDir)
+
+def ergScp(ipv,sDir,tDir):
+    '''
+    job函数，执行拷贝命令
+    '''
+    orderShell = "scp -r %s root@%s:%s"%(sDir,ipv,tDir)
+    print(orderShell)
+    #os.system(orderShell)
 
 if __name__ == "__main__":
     filePath = os.path.dirname(__file__)
-    conFile = '%s/ip.ini'%filePath
+    conFile = '%s/ip.ini' % filePath
     conf = configparser.ConfigParser()
     conf.read(conFile)
     ipList = conf["ipvalue"]["ip"].split(",")
     sourceDir = sys.argv[1]
     tagDir = sys.argv[2]
-    ergIp(ipList,sourceDir,tagDir)
+    p = Pool(processes = 5)
+    for ipValue in ipList:
+        p.apply_async(ergScp,(ipValue,sourceDir,tagDir))
+    p.close()
+    p.join()
+
 
