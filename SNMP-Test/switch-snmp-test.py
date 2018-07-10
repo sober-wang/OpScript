@@ -6,7 +6,7 @@
 
 from subprocess import *
 
-public_orde = "snmpwalk -v 2c -c public@123 "
+public_orde = "snmpwalk -v 2c -c public "
 orde = "%s 192.168.1."%public_orde
 
 orde_set = []
