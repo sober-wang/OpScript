@@ -281,7 +281,7 @@ def main():
     table_path = []
     for db in  db_list:
         tmp = "/user/hive/warehouse/{}.db".format(db)
-        table_path = get_fs.get_path_msg(tmp) + table_path
+        table_path.extend(get_fs.get_path_msg(tmp))
 
     # 数据库分区(pt)列表获取
     pt_path = []
