@@ -1,3 +1,9 @@
+/*
+	这些代码中的知识点：
+	string 是不可变字节序列，可以包含任意数据，所以底层表示为 byte类型 的数组
+	unicode 中的 unicode.IsNumber() 等方法只能接收单个字符，也就是 rune 类型 或者 i := '1' 定义的数据
+	通过 for 遍历 string 就可以得到 单个字符 rune 类型的数据
+*/
 package main
 
 import (
