@@ -39,7 +39,7 @@ func main() {
 		},
 		// 创建第二层 JSON 的指针，并给变量赋值
 		&Hello{
-			CubeType: "三角型",
+			CubeType: "正方形",
 			High:     1,
 			Width:    1,
 			Long:     1,
@@ -52,6 +52,11 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(string(b))
-	fmt.Printf("this is %s\n", b)
+
+	c, err := json.MarshalIndent(st, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("this have Indent \n %s", string(c))
 	//stb := &Study{}
 }
