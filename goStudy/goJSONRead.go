@@ -53,9 +53,10 @@ func main() {
 	f, err := os.Open(filePath)
 	dropErr(err)
 	bio := bufio.NewReader(f)
-	bfRead, _, err := bio.ReadLine()
+	// ReadLine() 方法一次尝试读取一行，如果过默认缓存值就会报错。默认遇见'\n'换行符会返回值。isPrefix 在查找到行尾标记后返回 false
+	bfRead, isPrefix, err := bio.ReadLine()
 	dropErr(err)
-	fmt.Printf("This mess is  [ %q ]\n", bfRead)
+	fmt.Printf("This mess is  [ %q ] [%v]\n", bfRead, isPrefix)
 
 	// 解析 JSON 数据使用 json.Unmarshal([]byte(JSON_DATA),JSON对应的结构体) ,也就是说我们在解析 JSON 的时候需要确定 JSON 的数据结构
 	res := &Study{}
