@@ -6,16 +6,16 @@ import (
 	"os"
 )
 
-type atAdd struct {
-	atMoblites []string `json:"atMoblies"`
-	isAtAll    bool     `json:"isAtAll"`
+type AtAdd struct {
+	AtMoblites []string `json:"atMoblies"`
+	IsAtAll    bool     `json:"isAtAll"`
 }
 
 // 构建 DingTalk Robot 信息结构体
-type jsonMsg struct {
-	msgType string            `json:"msgtype"`
+type JSONMsg struct {
+	MsgType string            `json:"msgtype"`
 	Text    map[string]string `json:"text"`
-	At      *atAdd            `json:"at"`
+	At      *AtAdd            `json:"at"`
 }
 
 func dropErr(e error) {
@@ -33,24 +33,24 @@ func creatJSON(msg string) string {
 	//	},
 	//}
 
-	m := &jsonMsg{
+	m := &JSONMsg{
 		"text",
 		map[string]string{
 			//	"content": "This is massage from Golang wold",
 			"content": msg,
 		},
-		&atAdd{
-			atMoblites: []string{
+		&AtAdd{
+			AtMoblites: []string{
 				"181********",
 			},
-			isAtAll: false,
+			IsAtAll: false,
 		},
 	}
 
 	//	data, err := json.MarshalIndent(m, "", "    ")
 	data, err := json.Marshal(m)
 	dropErr(err)
-	fmt.Println(m.At.atMoblites)
+	fmt.Println(m.At.AtMoblites)
 
 	return string(data)
 
