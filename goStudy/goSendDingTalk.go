@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	yaml "gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 )
 
+// 构建 是否 @ 人的结构体
 type AtAdd struct {
 	AtMoblites []string `json:"atMoblies"`
 	IsAtAll    bool     `json:"isAtAll"`
@@ -18,20 +21,32 @@ type JSONMsg struct {
 	At      *AtAdd            `json:"at"`
 }
 
+// 错误处理函数
 func dropErr(e error) {
 	if e != nil {
 		fmt.Println(e)
 	}
 }
 
-func creatJSON(msg string) string {
+type ConfMsg map[string]interface{}
 
-	//var msgAll = []jsonMsg{
-	//	msgType: "text",
-	//	Text: {
-	//		"content": "This is massage from Golang wold",
-	//	},
-	//}
+// 处理配置文件 Yaml
+func readConf(f string) ConfMsg {
+
+	var c ConfMsg
+
+	fileMsg, err := ioutil.ReadFile(f)
+	dropErr(err)
+
+	err = yaml.Unmarshal(fileMsg, &c)
+	dropErr(err)
+
+	return c
+
+}
+
+// 创建DingTalk 机器人接收信息
+func creatJSON(msg string, atList []string) string {
 
 	m := &JSONMsg{
 		"text",
@@ -40,9 +55,10 @@ func creatJSON(msg string) string {
 			"content": msg,
 		},
 		&AtAdd{
-			AtMoblites: []string{
-				"181********",
-			},
+			AtMoblites: atList,
+			//			AtMoblites: []string{
+			//				"181********",
+			//			},
 			IsAtAll: false,
 		},
 	}
@@ -60,7 +76,16 @@ func main() {
 	sendMsg := os.Args[1]
 	fmt.Printf("This message's tyep is %T,Message is %s\n", sendMsg)
 
-	dingTalkMsg := creatJSON(sendMsg)
-	fmt.Println(dingTalkMsg)
+	filePath := os.Args[2]
+	confMsg := readConf(filePath)
+	robotConf, ok := confMsg["dingTalk"].(map[interface{}]interface{})
+	fmt.Println(robotConf["robotLink"])
+	fmt.Printf("%s %T\n", ok, robotConf["atWho"])
+
+	phoneNumber := robotConf["atWho"]
+	fmt.Printf("%T\n", phoneNumber)
+
+	//	dingTalkMsg := creatJSON(sendMsg)
+	//	fmt.Println(dingTalkMsg)
 
 }
