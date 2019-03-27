@@ -1,0 +1,14 @@
+---
+# 你需要检测的进程;You need check process name.        
+procesList:
+  - zsh
+  - filebeat
+  - bash
+
+dingTalkRobot:
+  robotLink: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxxxxx
+  # DingTalk Robot URL Link
+  atWho: 
+  # 需要@的人，you need @ person.
+    - 181xxxxxx
+  
