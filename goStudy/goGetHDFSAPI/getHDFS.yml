@@ -1,0 +1,8 @@
+---
+hdfsapi:
+  ip: 192.168.1.1
+  port: 50070
+  username: hdfs
+  dirpath: /
+  averagesize: 4
+  resultfile: resutFile.txt
