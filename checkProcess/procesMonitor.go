@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -12,7 +13,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// 构建 错误处理函数
 func dropErr(e error) {
 	if e != nil {
 		fmt.Printf("This is error %s\n", e)
@@ -39,23 +39,25 @@ type TestResult struct {
 }
 
 // 构建 钉钉机器人 请求体
-func creatJSON(msg string, phoneList []string) []byte {
-	robotHead := &RobotHead{}
+func creatJSON(msg string, phoneList []string) RobotHead {
+	var robotHead RobotHead
 	robotHead.MsgType = "text"
 	robotHead.Text = make(map[string]string)
 	robotHead.Text["content"] = "进程检测结果\n" + msg + "\n进程宕了"
 	robotHead.At.AtMobiles = phoneList
 	robotHead.At.IsAtAll = false
-	msgHead, err := json.Marshal(robotHead)
-	dropErr(err)
+	log.Print("消失的进程 : ====> %v", robotHead.Text["content"])
 
-	return msgHead
+	return robotHead
 }
 
 // 发送消息的函数
-func sendMsg(url string, data []byte) {
+func sendMsg(url string, data RobotHead) {
+	//log.Println(data.ProcesName)
+	d, err := json.Marshal(data)
+	dropErr(err)
 	// 构建一个新的请求，bytes.NewBuffer()传入[]byte 数据
-	resq, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	resq, err := http.NewRequest("POST", url, bytes.NewBuffer(d))
 	dropErr(err)
 	// 设置请求头
 	resq.Header.Set("Content-Type", "application/json")
@@ -65,8 +67,6 @@ func sendMsg(url string, data []byte) {
 	resp, err := client.Do(resq)
 	dropErr(err)
 	defer resp.Body.Close()
-
-	fmt.Println(resp)
 
 }
 
@@ -87,9 +87,10 @@ func execCMD(procesTag string) bool {
 }
 
 // 生成发送的消息 json 数据
+// 检测进程存活
 func creatSendMsg(pTag []string) string {
 	// 构建 消息结构体，为了转化成 JSON 化后发送
-	resultMsg := &TestResult{}
+	var resultMsg TestResult
 	// 找到 hostname
 	tmpHostName, err := exec.Command("hostname").Output()
 	dropErr(err)
@@ -100,6 +101,11 @@ func creatSendMsg(pTag []string) string {
 			resultMsg.Status = false
 			resultMsg.ProcesName = append(resultMsg.ProcesName, v)
 		}
+	}
+	// 如果挂掉的进程列表 == 0 那么程序就退出
+	if len(resultMsg.ProcesName) == 0 {
+
+		os.Exit(1)
 	}
 
 	m, err := json.MarshalIndent(resultMsg, "", "    ")
