@@ -1,0 +1,13 @@
+---
+yarnapi:
+  ip: 192.168.1.1
+  port: 8088
+  # 运行时间 单位分钟
+  runtime: 10
+
+dingtalk:
+  robotlink: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxx
+  atwho:
+    - null
+
+logdir: ~/code/golang/yarnAPIUser/searchBatchOvetime
