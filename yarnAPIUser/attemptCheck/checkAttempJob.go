@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -14,11 +15,14 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+// 定义一个时间类型
+
 // 消息内容
 type M struct {
-	AppId         string `json:"applicationId"`
-	Name          string `json:"name"`
-	AttemptNumber int    `json:"attemptNumber"`
+	AppId         string    `json:"applicationId"`
+	Name          string    `json:"name"`
+	AttemptNumber int       `json:"attemptNumber"`
+	StartedTime   time.Time `json:"startedTime"`
 }
 
 // 定义错误处理函数
@@ -30,7 +34,7 @@ func dropErr(e error) {
 
 // 获取 Yarn 中 app 信息
 func getAPI(url string) []byte {
-	log.Printf("Yarn API addressses is  %s\n", url)
+	//	log.Printf("Yarn API addressses is  %s\n", url)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -64,6 +68,8 @@ func getAPPId(d []byte) []M {
 		var m M
 		m.AppId = jsoniter.Get(aData, i, "id").ToString()
 		m.Name = jsoniter.Get(aData, i, "name").ToString()
+		timeTmp := jsoniter.Get(aData, i, "startedTime").ToInt64() / 1000
+		m.StartedTime = time.Unix(timeTmp, 0)
 		mList = append(mList, m)
 	}
 	return mList
@@ -89,10 +95,9 @@ func getAttempt(appIdList []M, ip string, port int) []M {
 			s.Name = v.Name
 			s.AppId = v.AppId
 			s.AttemptNumber = atn
-			fmt.Printf("%v\n", s)
+			s.StartedTime = v.StartedTime
+			log.Printf("The [ %v ] ,attempt number is %v\n", s.AppId, s.AttemptNumber)
 			m = append(m, s)
-		} else {
-			break
 		}
 	}
 	return m
@@ -137,7 +142,7 @@ func main() {
 
 		phList := viper.GetStringSlice("dingtalk.atwho")
 		robotLink := viper.GetString("dingtalk.robotlink")
-		alarmMsg := fmt.Sprintf("这些任务出现过重试: %v", string(resultByte))
+		alarmMsg := fmt.Sprintf("这些任务出现过重试: %v\n重试任务数量 => [ %v ] 个", string(resultByte), len(resultMsg))
 		msgBody := sendingtalk.CreatMsgBody(alarmMsg, phList)
 		sendingtalk.SendMsg(robotLink, msgBody)
 	}
