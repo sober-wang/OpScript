@@ -34,7 +34,7 @@ func createService(svcURL, svcName string) {
 
 // createRoutes 在 Kong 已注册的服务上注册路由
 func createRoutes(svcName string) {
-		path := fmt.Sprintf("/%v",svcName)
+	path := fmt.Sprintf("/%v", svcName)
 	data := url.Values{
 		"name":    {svcName},
 		"paths[]": {path},
@@ -83,9 +83,9 @@ func main() {
 	kongSvcName := "hello" // Kong service 名称
 	kongSvcPort := "9527"  // 服务端口
 	//kongSvcIP := getMyIP()
-	kongSvcIP := "192.168.56.101" // 填写你的服务 IP 
-	ipPort := fmt.Sprintf("%v:%v",kongSvcIP,kongSvcPort)
-	log.Println("IP and Port => ",ipPort)
+	kongSvcIP := "192.168.56.101" // 填写你的服务 IP
+	ipPort := fmt.Sprintf("%v:%v", kongSvcIP, kongSvcPort)
+	log.Println("IP and Port => ", ipPort)
 
 	fulURL := fmt.Sprintf("http://%v", ipPort)
 	createService(fulURL, kongSvcName)
