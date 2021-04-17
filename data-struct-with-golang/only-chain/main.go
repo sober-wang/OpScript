@@ -73,7 +73,7 @@ func insertNode(head *Node, node *Node) {
 			node.Next = newTmp
 			// 将 tmp.Next 指向新节点
 			tmp.Next = node
-			fmt.Printf("节点 [ %v ] 插入成功", node.Number)
+			fmt.Printf("节点 [ %v ] 插入成功\n", node.Number)
 			break
 		} else {
 			tmp = tmp.Next
