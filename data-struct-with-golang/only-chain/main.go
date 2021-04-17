@@ -51,6 +51,7 @@ func isNil(head *Node) bool {
 	return false
 }
 
+// insertNode 顺序插入节点
 func insertNode(head *Node, node *Node) {
 	tmp := head
 	if isNil(tmp) {
@@ -81,6 +82,35 @@ func insertNode(head *Node, node *Node) {
 
 }
 
+// delNode 删除指定节点
+func delNode(head *Node, id int) {
+	// 定义滑动变量
+	tmp := head
+	check := false
+	if isNil(tmp) {
+		fmt.Println("链表为空")
+		return
+	}
+	for {
+		if tmp.Next == nil {
+			fmt.Printf("已到链表尾部，未找到目标节点： [ %v ]\n", id)
+		}
+		// 滑动到需要删除的节点的前一个结点，tmp.Next.Number == id
+		if tmp.Next.Number == id {
+			check = true
+			break
+		}
+		tmp = tmp.Next
+	}
+
+	if check {
+		// 将 tmp 下一个结点指向下下个结点
+		tmp.Next = tmp.Next.Next
+	} else {
+		fmt.Printf("未找到 [ %v ] 节点", id)
+	}
+}
+
 func main() {
 	fmt.Println("vim-go")
 	n := 5
@@ -103,5 +133,9 @@ func main() {
 		Number: 9,
 	}
 	insertNode(head, nNode)
+	fmt.Printf("未删除 8 号节点")
+	showNode(head)
+	delNode(head, 8)
+	fmt.Print("已删除 8 号节点")
 	showNode(head)
 }
