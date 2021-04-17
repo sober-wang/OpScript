@@ -34,6 +34,28 @@ func showNode(head *Node) {
 	}
 }
 
+// findNode 顺序查找需要的结点
+func findNode(head *Node, num int) {
+	tmp := head
+	check := false
+	for {
+		if tmp.Next == nil {
+			fmt.Println("单向链表打印完成")
+			break
+		}
+		if tmp.Number == num {
+			fmt.Printf("[ %v ] 结点已找到", num)
+			check = true
+			break
+		}
+		tmp = tmp.Next
+	}
+
+	if check {
+		fmt.Printf("[ %v ] 结点未找到", num)
+	}
+}
+
 // addABatch 批量创建链表中的元素
 func addABatch(head *Node, num int) {
 	for i := 0; i < num; i++ {
@@ -138,4 +160,5 @@ func main() {
 	delNode(head, 8)
 	fmt.Print("已删除 8 号节点")
 	showNode(head)
+	findNode(head, 7)
 }
